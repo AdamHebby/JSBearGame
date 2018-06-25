@@ -1,5 +1,9 @@
 (function() {
     var game = {
+        startPosition: {
+            x: 0,
+            y: 0
+        },
         bear: {
             display: true,
             position: {
@@ -19,6 +23,7 @@
             game.createTable();
             game.setListeners();
             game.generateEnvironment();
+            game.startPosition = game.player.position;
             game.displayGame();
         },
         deleteGameImages: function() {
@@ -34,7 +39,15 @@
                     x: game.player.position.x,
                     y: game.player.position.y
                 },
-                'icons/hiker.png'
+                'icons/hiker.png',
+                true
+            );
+            game.displayAt(
+                {
+                    x: game.startPosition.x,
+                    y: game.startPosition.y
+                },
+                'icons/cabin.png'
             );
             if (game.bear.display) {
                 game.displayAt(
@@ -151,7 +164,7 @@
 
             return dirs[dirMap[rand]];
         },
-        displayAt: function(pos, src) {
+        displayAt: function(pos, src, char = false) {
             if (!pos) {
                 return;
             }
@@ -161,6 +174,12 @@
             }
             var img  = new Image(45,45);
             img.src  = src;
+
+            if (char) {
+                // If the icon is the character, give it a z-index to ensure it's above other icons
+                img.style.zIndex = '1';
+            }
+
             cell.appendChild(img);
             return img;
         },
