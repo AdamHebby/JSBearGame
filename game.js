@@ -4,6 +4,7 @@
             x: 0,
             y: 0
         },
+        environment: {},
         bear: {
             display: true,
             position: {
@@ -34,30 +35,22 @@
         },
         displayGame: function() {
             game.deleteGameImages();
-            game.displayAt(
-                {
-                    x: game.player.position.x,
-                    y: game.player.position.y
-                },
-                'icons/hiker.png',
-                true
-            );
-            game.displayAt(
-                {
-                    x: game.startPosition.x,
-                    y: game.startPosition.y
-                },
-                'icons/cabin.png'
-            );
+
+            game.displayAt(game.player.position, 'icons/player.png', 100);
+            game.displayAt(game.startPosition, 'icons/cabin.png');
+
             if (game.bear.display) {
+                game.displayAt(game.bear.position, 'icons/bear.png', 100);
+            }
+
+            for (var env in game.environment) {
                 game.displayAt(
-                    {
-                        x: game.bear.position.x,
-                        y: game.bear.position.y
-                    },
-                    'icons/bear.png'
+                    game.environment[env].position,
+                    'icons/' + game.environment[env].envType + '.png',
+                    game.environment[env].zIndex
                 );
             }
+
             game.displayArrows();
             game.locationChecks();
         },
@@ -164,7 +157,7 @@
 
             return dirs[dirMap[rand]];
         },
-        displayAt: function(pos, src, char = false) {
+        displayAt: function(pos, src, zIndex = 0) {
             if (!pos) {
                 return;
             }
@@ -175,9 +168,8 @@
             var img  = new Image(45,45);
             img.src  = src;
 
-            if (char) {
-                // If the icon is the character, give it a z-index to ensure it's above other icons
-                img.style.zIndex = '1';
+            if (zIndex > 0) {
+                img.style.zIndex = zIndex;
             }
 
             cell.appendChild(img);
@@ -189,6 +181,39 @@
         generateEnvironment: function() {
             game.player.position = game.getRandomLocation();
             game.bear.position = game.getRandomLocation(3);
+
+            for (var i = 0; i < 8; i++) {
+                game.addElementRandomLocation('mountain');
+                game.addElementRandomLocation('forest');
+            }
+            for (var i = 0; i < 3; i++) {
+                game.addElementRandomLocation('cave');
+                game.addElementRandomLocation('pickaxe');
+            }
+            game.addElementRandomLocation('river');
+        },
+        addElementRandomLocation: function(envType, zIndex = 0) {
+            var ret = game.addEnvironmentElement(envType, game.getRandomLocation(), zIndex);
+            if (ret == false) {
+                game.addElementRandomLocation(envType, zIndex)
+            }
+            return;
+        },
+        addEnvironmentElement: function(envType, position, zIndex = 0) {
+            var len = (Object.keys(this.environment).length + 1);
+
+            Object.keys(game.environment).forEach(function(key) {
+                if (game.environment[key].position.x == position.x && game.environment[key].position.y == position.y) {
+                    return;
+                }
+            });
+
+            game.environment[len] = {
+                envType: envType,
+                position: position,
+                zIndex: zIndex,
+            };
+            return true;
         },
         getRandomLocation: function(playerCheck = false) {
             var pos = {
