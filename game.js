@@ -62,7 +62,7 @@
             game.locationChecks();
         },
         locationChecks: function() {
-            if (game.withinXBlocks(game.bear.position, game.player.position, 3)) {
+            if (game.withinXBlocks(game.bear.position, game.player.position, 2)) {
                 document.querySelector('#game-table').setAttribute('class', 'bear-close');
             } else {
                 document.querySelector('#game-table').setAttribute('class', '');
