@@ -8,6 +8,7 @@
             }
         },
         player: {
+            display: true,
             dead: false,
             position: {
                 x: 0,
@@ -35,14 +36,24 @@
                 },
                 'icons/hiker.png'
             );
-            game.displayAt(
-                {
-                    x: game.bear.position.x,
-                    y: game.bear.position.y
-                },
-                'icons/bear.png'
-            );
+            if (game.bear.display) {
+                game.displayAt(
+                    {
+                        x: game.bear.position.x,
+                        y: game.bear.position.y
+                    },
+                    'icons/bear.png'
+                );
+            }
             game.displayArrows();
+        },
+        toggleBearVisibility: function() {
+            game.bear.display = !game.bear.display;
+            game.displayGame();
+        },
+        togglePlayerVisibility: function() {
+            game.player.display = !game.player.display;
+            game.displayGame();
         },
         displayArrows: function() {
             var dirs = game.getDirectionCoords(game.player.position);
