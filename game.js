@@ -46,6 +46,14 @@
                 );
             }
             game.displayArrows();
+            game.locationChecks();
+        },
+        locationChecks: function() {
+            if (game.withinXBlocks(game.bear.position, game.player.position, 3)) {
+                document.querySelector('#game-table').setAttribute('class', 'bear-close');
+            } else {
+                document.querySelector('#game-table').setAttribute('class', '');
+            }
         },
         toggleBearVisibility: function() {
             game.bear.display = !game.bear.display;
@@ -172,11 +180,14 @@
                 return pos;
             } else {
                 // If one position is too close to the player, move it
-                if (Math.abs(pos.x - game.player.position.x) <= playerCheck && Math.abs(pos.y - game.player.position.y) <= playerCheck) {
+                if (game.withinXBlocks(pos, game.player.position, playerCheck)) {
                     return game.getRandomLocation(playerCheck);
                 }
                 return pos;
             }
+        },
+        withinXBlocks: function(pos1, pos2, count = 3) {
+            return Math.abs(pos1.x - pos2.x) <= count && Math.abs(pos1.y - pos2.y) <= count;
         },
         setListeners: function() {
             document.querySelector('#btn-inventory').addEventListener('click', function(){game.showInventory()});

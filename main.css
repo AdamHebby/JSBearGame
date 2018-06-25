@@ -37,13 +37,16 @@ html, body, .window {
     border: 2px solid white;
     margin: 30px 10px;
     padding: 0;
-    border-collapse: collapse;
+    /*border-collapse: collapse;*/
+}
+#game-table.bear-close {
+    border: 2px solid red;
 }
 .game {
     text-align: center;
 }
 #game-table .cell {
-    border: 1px solid;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     width: 10%;
     height: 10%;
     position: relative;
