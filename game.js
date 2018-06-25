@@ -294,56 +294,6 @@
         }
     };
 
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
-    visibleLog('Test', 'red');
-    visibleLog('Test', 'white');
-    visibleLog('Test', 'blue');
-    visibleLog('Test', 'green');
-
     function visibleLog(msg, color = 'white') {
         var log   = document.querySelector('#log');
         var entry = document.createElement('div');
