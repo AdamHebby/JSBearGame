@@ -1,0 +1,65 @@
+
+html, body, .window {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+    color: white;
+    font-family: Consolas,monaco,monospace; 
+    font-size: 16px;
+}
+.window {
+    overflow: hidden;
+}
+.left-col {
+    width: 150px;
+    display: inline-block;
+    height: 100%;
+    float: left;
+    color: #FFFFFF;
+    border-right: 2px solid white;
+    transition: width 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+.right-col {
+    display: inline-block;
+    width: calc(100% - 152px);
+    height: 100%;
+    color: #FFFFFF;
+    transition: width 0.3s ease;
+}
+#game-table {
+    width: 600px;
+    height: 600px;
+    display: inline-table;
+    border: 2px solid white;
+    margin: 30px 10px;
+    padding: 0;
+    border-collapse: collapse;
+}
+.game {
+    text-align: center;
+}
+#game-table .cell {
+    border: 1px solid;
+    width: 10%;
+    height: 10%;
+    position: relative;
+}
+.sidebar-entry {
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    border-bottom: 1px solid white;
+    padding: 0 10px;
+}
+.cell img {
+    left: 7px;
+    top: 7px;
+    position: absolute;
+}
+.directionBtn {
+    opacity: 0.5;
+}
