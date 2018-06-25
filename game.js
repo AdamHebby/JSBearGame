@@ -294,10 +294,70 @@
         }
     };
 
-try {
-    game.init();
-} catch(e) {
-    // statements
-}
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
 
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    visibleLog('Test', 'red');
+    visibleLog('Test', 'white');
+    visibleLog('Test', 'blue');
+    visibleLog('Test', 'green');
+
+    function visibleLog(msg, color = 'white') {
+        var log   = document.querySelector('#log');
+        var entry = document.createElement('div');
+        var text  = document.createTextNode(msg);
+        entry.setAttribute('class', 'entry');
+        entry.appendChild(text);
+
+        if (color) {
+            entry.style.color = color;
+        }
+
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    game.init();
 })();

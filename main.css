@@ -9,7 +9,6 @@ html, body, .window {
     font-size: 16px;
 }
 .window {
-    overflow: hidden;
 }
 .left-col {
     width: 150px;
@@ -37,7 +36,6 @@ html, body, .window {
     border: 2px solid white;
     margin: 30px 10px;
     padding: 0;
-    /*border-collapse: collapse;*/
 }
 #game-table.bear-close {
     border: 2px solid red;
@@ -65,4 +63,10 @@ html, body, .window {
 }
 .directionBtn {
     opacity: 0.5;
+}
+#log {
+    width: 600px;
+    margin: 0 auto;
+    height: 120px;
+    overflow-y: scroll;
 }
