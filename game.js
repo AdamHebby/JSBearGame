@@ -47,16 +47,24 @@
             ]
         },
         iron: {
-            carryWeight: 2
+            name: 'Iron Bar',
+            carryWeight: 2,
+            envType: 'mine'
         },
         bronze: {
-            carryWeight: 2
+            name: 'Bronze Bar',
+            carryWeight: 2,
+            envType: 'mine'
         },
         gold: {
-            carryWeight: 2
+            name: 'Gold Bar',
+            carryWeight: 2,
+            envType: 'mine'
         },
         planks: {
-            carryWeight: 1
+            name: 'Wood Planks',
+            carryWeight: 1,
+            envType: 'forest'
         },
     };
     var inventory = {
@@ -70,6 +78,7 @@
             } else {
                 this.current[giveItem] = {count: count};
             }
+            inventory.currentCarryWeight += (items[giveItem].carryWeight * count);
         },
         removeItem: function(removeItem, count = 1) {
             if (this.hasItem(removeItem)) {
@@ -78,6 +87,7 @@
                 } else {
                     delete this.current[removeItem];
                 }
+                inventory.currentCarryWeight -= (items[giveItem].carryWeight * count);
             } else {
                 return false;
             }
@@ -93,6 +103,7 @@
         }
     };
     var game = {
+        paused: false,
         startPosition: {
             x: 0,
             y: 0
@@ -175,7 +186,7 @@
             }
         },
         movePlayer: function(pos, moveBear = true) {
-            if (!game.validPosition(pos)) {
+            if (!game.validPosition(pos) || game.paused !== false) {
                 return false;
             }
             game.player.position = pos;
@@ -281,7 +292,7 @@
             }
             for (var i = 0; i < 3; i++) {
                 game.addElementRandomLocation('cave');
-                game.addElementRandomLocation('pickaxe');
+                game.addElementRandomLocation('mine');
             }
             game.addElementRandomLocation('river');
         },
@@ -329,6 +340,48 @@
         setListeners: function() {
             document.addEventListener('keydown', game.handleKeyboardEvent, false);
         },
+        handleEnvInteraction: function() {
+            for (key in game.environment) {
+                const envPos = game.environment[key].position;
+                if (envPos.x === game.player.position.x && envPos.y === game.player.position.y) {
+                    switch(game.environment[key].envType) {
+                        case 'mine':
+                            game.interactWithMine(key);
+                            break;
+                        case 'forest':
+                            game.interactWithForest(key);
+                            break;
+                    }
+                }
+            }
+        },
+        interactWithMine: function(key) {
+            visibleLog('Mining...', 'yellow');
+            game.genericEnvInteract(key);
+        },
+        genericEnvInteract: function(key) {
+            var poss = [];
+
+            for (iKey in items) {
+                if (items[iKey].envType === game.environment[key].envType) {
+                    poss.push(iKey);
+                }
+            }
+            var pickPoss = game.ranNum(0, (poss.length - 1));
+            var giveCount = game.ranNum(1, 2);
+
+            game.paused = true;
+
+            setTimeout(function() {
+                game.paused = false;
+                inventory.giveItem(poss[pickPoss], giveCount);
+                visibleLog('Gained +'+giveCount+' ' + items[poss[pickPoss]]['name'], 'green');
+            }, 3000);
+        },
+        interactWithForest: function(key) {
+            visibleLog('Chopping Trees...', 'yellow');
+            game.genericEnvInteract(key);
+        },
         handleKeyboardEvent: function(e) {
             if (game.player.dead) {
                 return;
@@ -340,6 +393,9 @@
 
             var info = document.getElementById("info");
             switch (keycode) {
+                case 13:
+                    game.handleEnvInteraction();
+                    break;
                 case 37:
                     game.movePlayer(dirs.west);
                     break;
