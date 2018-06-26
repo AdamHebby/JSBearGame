@@ -1,4 +1,97 @@
 (function() {
+    var items = {
+        shortSword: {
+            name: 'Short Sword',
+            damage: 5,
+            materials: [
+                {'iron': 2},
+                {'planks': 1}
+            ],
+            carryWeight: 3
+        },
+        basicSword: {
+            name: 'Basic Sword',
+            damage: 8,
+            materials: [
+                {'iron': 3},
+                {'bronze': 1},
+                {'planks': 1}
+            ],
+            carryWeight: 5
+        },
+        megaSword: {
+            name: 'Mega Sword',
+            damage: 12,
+            materials: [
+                {'iron': 4},
+                {'gold': 2},
+                {'planks': 1}
+            ],
+            carryWeight: 9
+        },
+        basicAxe: {
+            name: 'Basic Axe',
+            damage: 3,
+            materials: [
+                {'iron': 2},
+                {'planks': 1}
+            ]
+        },
+        solidAxe: {
+            name: 'Solid Axe',
+            damage: 6,
+            materials: [
+                {'iron': 3},
+                {'bronze': 1},
+                {'planks': 1}
+            ]
+        },
+        iron: {
+            carryWeight: 2
+        },
+        bronze: {
+            carryWeight: 2
+        },
+        gold: {
+            carryWeight: 2
+        },
+        planks: {
+            carryWeight: 1
+        },
+    };
+    var inventory = {
+        maxCarryWeight: 100,
+        currentCarryWeight: 0,
+        current: [],
+
+        giveItem: function(giveItem, count = 1) {
+            if (this.hasItem(giveItem)) {
+                this.current[giveItem].count += count;
+            } else {
+                this.current[giveItem] = {count: count};
+            }
+        },
+        removeItem: function(removeItem, count = 1) {
+            if (this.hasItem(removeItem)) {
+                if (this.current[removeItem].count > count) {
+                    this.current[removeItem].count -= count;
+                } else {
+                    delete this.current[removeItem];
+                }
+            } else {
+                return false;
+            }
+        },
+        hasItem: function(item, count = 1) {
+            if (this.current[item] === undefined) {
+                return false;
+            }
+            if (this.current[item].count >= count) {
+                return true;
+            }
+            return false;
+        }
+    };
     var game = {
         startPosition: {
             x: 0,
@@ -36,11 +129,11 @@
         displayGame: function() {
             game.deleteGameImages();
 
-            game.displayAt(game.player.position, 'icons/player.png', 100);
+            game.displayAt(game.player.position, 'icons/player.png', 10);
             game.displayAt(game.startPosition, 'icons/cabin.png');
 
             if (game.bear.display) {
-                game.displayAt(game.bear.position, 'icons/bear.png', 100);
+                game.displayAt(game.bear.position, 'icons/bear.png', 10);
             }
 
             for (var env in game.environment) {
@@ -234,9 +327,6 @@
             return Math.abs(pos1.x - pos2.x) <= count && Math.abs(pos1.y - pos2.y) <= count;
         },
         setListeners: function() {
-            document.querySelector('#btn-inventory').addEventListener('click', function(){game.showInventory()});
-            document.querySelector('#btn-hints').addEventListener('click', function(){game.showHints()});
-            document.querySelector('#btn-help').addEventListener('click', function(){game.showHelp()});
             document.addEventListener('keydown', game.handleKeyboardEvent, false);
         },
         handleKeyboardEvent: function(e) {
@@ -277,17 +367,6 @@
                 south: south
             }
         },
-        showInventory: function() {
-            if (game.player.dead) {
-                return;
-            }
-        },
-        showHints: function() {
-            game.generateEnvironment();
-            game.displayGame();
-        },
-        showHelp: function() {
-        },
         createTable: function() {
             var cont = document.querySelector('#game-container');
             var table = cont.appendChild(document.createElement('table'));
@@ -319,6 +398,26 @@
         }
     };
 
+
+    document.querySelector('#btn-inventory').addEventListener('click', function(){showPopover('inventory')});
+    document.querySelector('#btn-hints').addEventListener('click', function(){showPopover('hints')});
+    document.querySelector('#btn-help').addEventListener('click', function(){showPopover('help')});
+    document.querySelector('.popover-hide').addEventListener('click', function(){hidePopovers()});
+
+
+    function hidePopovers() {
+        var pops = document.querySelectorAll('.popover, .popover-hide');
+        [].forEach.call(pops, function(pop) {
+            pop.classList.add('hidden');
+        });
+    };
+
+    function showPopover(name) {
+        hidePopovers();
+        document.querySelector('#' + name + '.popover').setAttribute('class', 'popover');
+        document.querySelector('.popover-hide').setAttribute('class', 'popover-hide');
+    };
+
     function visibleLog(msg, color = 'white') {
         var log   = document.querySelector('#log');
         var entry = document.createElement('div');
@@ -335,4 +434,5 @@
     }
 
     game.init();
+
 })();
