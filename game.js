@@ -5,7 +5,7 @@
             damage: 5,
             materials: [
                 {'iron': 2},
-                {'planks': 1}
+                {'wood': 1}
             ],
             carryWeight: 3
         },
@@ -15,7 +15,7 @@
             materials: [
                 {'iron': 3},
                 {'bronze': 1},
-                {'planks': 1}
+                {'wood': 1}
             ],
             carryWeight: 5
         },
@@ -25,7 +25,7 @@
             materials: [
                 {'iron': 4},
                 {'gold': 2},
-                {'planks': 1}
+                {'wood': 1}
             ],
             carryWeight: 9
         },
@@ -34,7 +34,7 @@
             damage: 3,
             materials: [
                 {'iron': 2},
-                {'planks': 1}
+                {'wood': 1}
             ]
         },
         solidAxe: {
@@ -43,7 +43,7 @@
             materials: [
                 {'iron': 3},
                 {'bronze': 1},
-                {'planks': 1}
+                {'wood': 1}
             ]
         },
         iron: {
@@ -61,8 +61,8 @@
             carryWeight: 2,
             envType: 'mine'
         },
-        planks: {
-            name: 'Wood Planks',
+        wood: {
+            name: 'Wood',
             carryWeight: 1,
             envType: 'forest'
         },
@@ -383,7 +383,7 @@
             game.genericEnvInteract(key);
         },
         handleKeyboardEvent: function(e) {
-            if (game.player.dead) {
+            if (game.player.dead || game.paused) {
                 return;
             }
             var dirs = game.getDirectionCoords(game.player.position);
@@ -455,7 +455,7 @@
     };
 
 
-    document.querySelector('#btn-inventory').addEventListener('click', function(){showPopover('inventory')});
+    document.querySelector('#btn-inventory').addEventListener('click', function(){showInventory()});
     document.querySelector('#btn-hints').addEventListener('click', function(){showPopover('hints')});
     document.querySelector('#btn-help').addEventListener('click', function(){showPopover('help')});
     document.querySelector('.popover-hide').addEventListener('click', function(){hidePopovers()});
@@ -467,6 +467,38 @@
             pop.classList.add('hidden');
         });
     };
+
+    function showInventory() {
+        invBox = document.querySelector('#inventory .popover-content');
+        prevItems = document.querySelectorAll('#inventory .item');
+
+        [].forEach.call(prevItems, function(prevItem) {
+            prevItem.parentNode.removeChild(prevItem);
+        });
+
+        for (key in inventory.current) {
+            var entry = document.createElement('div');
+            entry.setAttribute('class', 'item');
+
+            var name = document.createElement('div');
+            name.innerText = items[key].name;
+            name.setAttribute('class', 'item-name');
+
+            var image = document.createElement('img');
+            image.src = 'icons/'+key+'.png';
+            image.setAttribute('class', 'item-image');
+
+            var count = document.createElement('div');
+            count.innerText = inventory.current[key].count;
+            count.setAttribute('class', 'item-count');
+
+            entry.appendChild(count);
+            entry.appendChild(name);
+            entry.appendChild(image);
+            invBox.appendChild(entry);
+        }
+        showPopover('inventory');
+    }
 
     function showPopover(name) {
         hidePopovers();

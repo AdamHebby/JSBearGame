@@ -101,3 +101,41 @@ html, body, .window {
     height: 120px;
     overflow-y: scroll;
 }
+.popover-title {
+    text-align: center;
+    font-size: 18px;
+    padding: 5px 0;
+    border-bottom: 2px solid white;
+}
+
+.popover-content {
+    padding: 5px;
+}
+
+.item {
+    display: inline-block;
+    width: 25%;
+    border: 1px solid white;
+    padding: 0;
+    position: relative;
+    text-align: center;
+}
+
+.item-name {
+    text-align: center;
+}
+
+.item-count {
+    text-align: center;
+    display: inline-block;
+    float: right;
+    background: #ffb600;
+    color: black;
+    border-radius: 24px;
+    width: 22px;
+    height: 22px;
+    line-height: 24px;
+    top: 2px;
+    right: 2px;
+    position: absolute;
+}
