@@ -112,6 +112,10 @@ html, body, .window {
     padding: 5px;
 }
 
+.popover-content * {
+    user-select: none;
+}
+
 .item {
     display: inline-block;
     width: 25%;
@@ -138,4 +142,11 @@ html, body, .window {
     top: 2px;
     right: 2px;
     position: absolute;
+}
+.item-remove {
+    cursor: pointer;
+    background: #800404;
+    border-top: 1px solid white;
+    padding: 2px 0;
+    line-height: 22px;
 }

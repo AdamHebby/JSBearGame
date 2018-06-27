@@ -371,7 +371,6 @@
             for (var key in game.environment) {
                 var envPos = game.environment[key].position;
                 if (envPos.x === posCopy.x && envPos.y === posCopy.y) {
-                    console.log(envPos, posCopy);
                     return key;
                 }
             }
@@ -513,10 +512,20 @@
             count.innerText = inventory.current[key].count;
             count.setAttribute('class', 'item-count');
 
+            var removeBtn = document.createElement('div');
+            removeBtn.innerText = 'Delete Item';
+            removeBtn.setAttribute('class', 'item-remove');
+            removeBtn.setAttribute('data-key', key);
+
             entry.appendChild(count);
             entry.appendChild(name);
             entry.appendChild(image);
+            entry.appendChild(removeBtn);
             invBox.appendChild(entry);
+            removeBtn.addEventListener('click', function(){
+                inventory.removeItem(this.getAttribute('data-key'));
+                showInventory();
+            });
         }
         showPopover('inventory');
     }
