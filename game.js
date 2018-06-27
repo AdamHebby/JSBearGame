@@ -391,13 +391,33 @@
             var pickPoss = game.ranNum(0, (poss.length - 1));
             var giveCount = game.ranNum(1, 2);
 
-            game.paused = true;
-
-            setTimeout(function() {
-                game.paused = false;
+            game.pauseGame(3000, function() {
                 inventory.giveItem(poss[pickPoss], giveCount);
                 visibleLog('Gained +'+giveCount+' ' + items[poss[pickPoss]]['name'], 'green');
-            }, 3000);
+            });
+        },
+        pauseGame: function(duration, callback) {
+            game.paused = true;
+
+            var elem = document.querySelector('#progress-bar .percentage');;
+
+            var st = window.performance.now();
+            window.requestAnimationFrame(function step(time) {
+                var diff = Math.round(time - st),
+                val = Math.round(diff / duration * 100);
+                val = val > 100 ? 100 : val;
+                elem.style.width = val + '%';
+                if (diff < duration) {
+                    window.requestAnimationFrame(step);
+                }
+                if (val == 100) {
+                    game.paused = false;
+                    elem.style.width = '0%';
+                    callback();
+                    return;
+                }
+            });
+
         },
         interactWithForest: function(key) {
             visibleLog('Chopping Trees...', 'yellow');

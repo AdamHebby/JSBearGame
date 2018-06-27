@@ -65,7 +65,7 @@ html, body, .window {
     height: 600px;
     display: inline-table;
     border: 2px solid white;
-    margin: 30px 10px;
+    margin: 30px 10px 0;
     padding: 0;
 }
 #game-table.bear-close {
@@ -149,4 +149,16 @@ html, body, .window {
     border-top: 1px solid white;
     padding: 2px 0;
     line-height: 22px;
+}
+#progress-bar {
+    width: 600px;
+    margin: 0 auto;
+    height: 5px;
+    display: flex;
+}
+#progress-bar .percentage {
+    display: inline-block;
+    height: 5px;
+    width: 0%;
+    background: green;
 }
