@@ -87,7 +87,7 @@
                 } else {
                     delete this.current[removeItem];
                 }
-                inventory.currentCarryWeight -= (items[giveItem].carryWeight * count);
+                inventory.currentCarryWeight -= (items[removeItem].carryWeight * count);
             } else {
                 return false;
             }
@@ -299,7 +299,7 @@
                 game.addElementRandomLocation('mountain');
                 game.addElementRandomLocation('forest');
             }
-            for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
                 game.addElementRandomLocation('cave');
                 game.addElementRandomLocation('mine');
             }
@@ -350,7 +350,7 @@
             document.addEventListener('keydown', game.handleKeyboardEvent, false);
         },
         handleEnvInteraction: function() {
-            for (key in game.environment) {
+            for (var key in game.environment) {
                 const envPos = game.environment[key].position;
                 if (envPos.x === game.player.position.x && envPos.y === game.player.position.y) {
                     switch(game.environment[key].envType) {
@@ -371,7 +371,7 @@
         genericEnvInteract: function(key) {
             var poss = [];
 
-            for (iKey in items) {
+            for (var iKey in items) {
                 if (items[iKey].envType === game.environment[key].envType) {
                     poss.push(iKey);
                 }
@@ -400,7 +400,6 @@
             if (!e) {e = window.event;} // for old IE compatible
             var keycode = e.keyCode || e.which; // also for cross-browser compatible
 
-            var info = document.getElementById('info');
             switch (keycode) {
             case 13:
                 game.handleEnvInteraction();
@@ -478,14 +477,14 @@
     }
 
     function showInventory() {
-        invBox = document.querySelector('#inventory .popover-content');
-        prevItems = document.querySelectorAll('#inventory .item');
+        var invBox = document.querySelector('#inventory .popover-content');
+        var prevItems = document.querySelectorAll('#inventory .item');
 
         [].forEach.call(prevItems, function(prevItem) {
             prevItem.parentNode.removeChild(prevItem);
         });
 
-        for (key in inventory.current) {
+        for (var key in inventory.current) {
             var entry = document.createElement('div');
             entry.setAttribute('class', 'item');
 
