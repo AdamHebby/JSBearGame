@@ -117,6 +117,8 @@
             }
         },
         player: {
+            xp: 0,
+            level: 1,
             display: true,
             dead: false,
             position: {
@@ -124,6 +126,7 @@
                 y: 0
             }
         },
+        levelScale: 0.04,
         init: function() {
             game.createTable();
             game.setListeners();
@@ -158,6 +161,12 @@
             game.displayArrows();
             game.locationChecks();
         },
+        giveXP: function(count) {
+            game.player.xp += count;
+            game.player.level = Math.ceil(game.levelScale * Math.sqrt(game.player.xp));
+            document.querySelector('#btn-xp').innerHTML = 'XP: '+game.player.xp;
+            document.querySelector('#btn-level').innerHTML = 'Level: '+game.player.level;
+        },
         locationChecks: function() {
             if (game.withinXBlocks(game.bear.position, game.player.position, 2)) {
                 document.querySelector('#game-table').setAttribute('class', 'bear-close');
@@ -181,7 +190,7 @@
                     var newBtn = game.displayAt(dirs[dire], 'icons/' + dire + '.png');
                     newBtn.setAttribute('class', 'directionBtn');
                     newBtn.setAttribute('data-pos', JSON.stringify(dirs[dire]));
-                    newBtn.addEventListener('click', function(){game.movePlayer(JSON.parse(this.getAttribute('data-pos')))});
+                    newBtn.addEventListener('click', function(){game.movePlayer(JSON.parse(this.getAttribute('data-pos')));});
                 }
             }
         },
@@ -280,7 +289,7 @@
             return img;
         },
         getCell: function(positions) {
-            return document.querySelector("tr[data-row='" + positions.y + "'] > .cell[data-col='" + positions.x + "']");
+            return document.querySelector('tr[data-row=\'' + positions.y + '\'] > .cell[data-col=\'' + positions.x + '\']');
         },
         generateEnvironment: function() {
             game.player.position = game.getRandomLocation();
@@ -299,7 +308,7 @@
         addElementRandomLocation: function(envType, zIndex = 0) {
             var ret = game.addEnvironmentElement(envType, game.getRandomLocation(), zIndex);
             if (ret == false) {
-                game.addElementRandomLocation(envType, zIndex)
+                game.addElementRandomLocation(envType, zIndex);
             }
             return;
         },
@@ -345,12 +354,12 @@
                 const envPos = game.environment[key].position;
                 if (envPos.x === game.player.position.x && envPos.y === game.player.position.y) {
                     switch(game.environment[key].envType) {
-                        case 'mine':
-                            game.interactWithMine(key);
-                            break;
-                        case 'forest':
-                            game.interactWithForest(key);
-                            break;
+                    case 'mine':
+                        game.interactWithMine(key);
+                        break;
+                    case 'forest':
+                        game.interactWithForest(key);
+                        break;
                     }
                 }
             }
@@ -391,23 +400,23 @@
             if (!e) {e = window.event;} // for old IE compatible
             var keycode = e.keyCode || e.which; // also for cross-browser compatible
 
-            var info = document.getElementById("info");
+            var info = document.getElementById('info');
             switch (keycode) {
-                case 13:
-                    game.handleEnvInteraction();
-                    break;
-                case 37:
-                    game.movePlayer(dirs.west);
-                    break;
-                case 38:
-                    game.movePlayer(dirs.north);
-                    break;
-                case 39:
-                    game.movePlayer(dirs.east);
-                    break;
-                case 40:
-                    game.movePlayer(dirs.south);
-                    break;
+            case 13:
+                game.handleEnvInteraction();
+                break;
+            case 37:
+                game.movePlayer(dirs.west);
+                break;
+            case 38:
+                game.movePlayer(dirs.north);
+                break;
+            case 39:
+                game.movePlayer(dirs.east);
+                break;
+            case 40:
+                game.movePlayer(dirs.south);
+                break;
             }
         },
         getDirectionCoords: function(pos) {
@@ -421,7 +430,7 @@
                 east: east,
                 north: north,
                 south: south
-            }
+            };
         },
         createTable: function() {
             var cont = document.querySelector('#game-container');
@@ -455,10 +464,10 @@
     };
 
 
-    document.querySelector('#btn-inventory').addEventListener('click', function(){showInventory()});
-    document.querySelector('#btn-hints').addEventListener('click', function(){showPopover('hints')});
-    document.querySelector('#btn-help').addEventListener('click', function(){showPopover('help')});
-    document.querySelector('.popover-hide').addEventListener('click', function(){hidePopovers()});
+    document.querySelector('#btn-inventory').addEventListener('click', function(){showInventory();});
+    document.querySelector('#btn-hints').addEventListener('click', function(){showPopover('hints');});
+    document.querySelector('#btn-help').addEventListener('click', function(){showPopover('help');});
+    document.querySelector('.popover-hide').addEventListener('click', function(){hidePopovers();});
 
 
     function hidePopovers() {
@@ -466,7 +475,7 @@
         [].forEach.call(pops, function(pop) {
             pop.classList.add('hidden');
         });
-    };
+    }
 
     function showInventory() {
         invBox = document.querySelector('#inventory .popover-content');
@@ -504,7 +513,7 @@
         hidePopovers();
         document.querySelector('#' + name + '.popover').setAttribute('class', 'popover');
         document.querySelector('.popover-hide').setAttribute('class', 'popover-hide');
-    };
+    }
 
     function visibleLog(msg, color = 'white') {
         var log   = document.querySelector('#log');
@@ -523,4 +532,5 @@
 
     game.init();
 
+    game.giveXP(1);
 })();
