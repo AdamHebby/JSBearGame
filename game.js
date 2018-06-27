@@ -144,7 +144,7 @@
             game.deleteGameImages();
 
             game.displayAt(game.player.position, 'icons/player.png', 10);
-            game.displayAt(game.startPosition, 'icons/cabin.png');
+            game.addEnvironmentElement('cabin', game.startPosition);
 
             if (game.bear.display) {
                 game.displayAt(game.bear.position, 'icons/bear.png', 10);
@@ -317,7 +317,7 @@
 
             Object.keys(game.environment).forEach(function(key) {
                 if (game.environment[key].position.x == position.x && game.environment[key].position.y == position.y) {
-                    return;
+                    return false;
                 }
             });
 
@@ -333,6 +333,9 @@
                 x: game.ranNum(0, 9),
                 y: game.ranNum(0, 9)
             };
+            if (game.getExistingEnvironment(pos) !== false) {
+                return game.getRandomLocation(playerCheck);
+            }
             if (playerCheck === false) {
                 return pos;
             } else {
@@ -350,19 +353,29 @@
             document.addEventListener('keydown', game.handleKeyboardEvent, false);
         },
         handleEnvInteraction: function() {
-            for (var key in game.environment) {
-                const envPos = game.environment[key].position;
-                if (envPos.x === game.player.position.x && envPos.y === game.player.position.y) {
-                    switch(game.environment[key].envType) {
-                    case 'mine':
-                        game.interactWithMine(key);
-                        break;
-                    case 'forest':
-                        game.interactWithForest(key);
-                        break;
-                    }
+            var existing = game.getExistingEnvironment(game.player.position);
+
+            if (existing !== false) {
+                switch(game.environment[existing].envType) {
+                case 'mine':
+                    game.interactWithMine(existing);
+                    break;
+                case 'forest':
+                    game.interactWithForest(existing);
+                    break;
                 }
             }
+        },
+        getExistingEnvironment: function(pos) {
+            var posCopy = Object.assign({}, pos);
+            for (var key in game.environment) {
+                var envPos = game.environment[key].position;
+                if (envPos.x === posCopy.x && envPos.y === posCopy.y) {
+                    console.log(envPos, posCopy);
+                    return key;
+                }
+            }
+            return false;
         },
         interactWithMine: function(key) {
             visibleLog('Mining...', 'yellow');
