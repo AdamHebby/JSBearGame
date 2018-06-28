@@ -164,8 +164,8 @@
         giveXP: function(count) {
             game.player.xp += count;
             game.player.level = Math.ceil(game.levelScale * Math.sqrt(game.player.xp));
-            document.querySelector('#btn-xp').innerHTML = 'XP: '+game.player.xp;
-            document.querySelector('#btn-level').innerHTML = 'Level: '+game.player.level;
+            document.querySelector('#btn-xp').innerHTML    = 'XP: ' + game.player.xp;
+            document.querySelector('#btn-level').innerHTML = 'Level: ' + game.player.level;
         },
         locationChecks: function() {
             if (game.withinXBlocks(game.bear.position, game.player.position, 2)) {
@@ -190,7 +190,12 @@
                     var newBtn = game.displayAt(dirs[dire], 'icons/' + dire + '.png');
                     newBtn.setAttribute('class', 'directionBtn');
                     newBtn.setAttribute('data-pos', JSON.stringify(dirs[dire]));
-                    newBtn.addEventListener('click', function(){game.movePlayer(JSON.parse(this.getAttribute('data-pos')));});
+
+                    newBtn.addEventListener('click', function() {
+                        game.movePlayer(
+                            JSON.parse(this.getAttribute('data-pos'))
+                        );
+                    });
                 }
             }
         },
@@ -226,12 +231,16 @@
         moveBear: function(pos = false) {
             if (!pos) {
                 var randPos = game.moveRandDirection(game.bear.position);
+
                 if (game.validPosition(randPos)) {
+
+                    // TODO - Build some kind of smart function for the bear to follow the player a bit
                     if (game.checkCollision(randPos, game.player.position) && game.ranNum(0, 100) > 50) {
                         game.moveBear();
                     } else {
                         game.bear.position = randPos;
                     }
+
                 } else {
                     game.moveBear();
                 }
@@ -278,8 +287,8 @@
             if (!cell) {
                 return;
             }
-            var img  = new Image(45,45);
-            img.src  = src;
+            var img = new Image(45,45);
+            img.src = src;
 
             if (zIndex > 0) {
                 img.style.zIndex = zIndex;
@@ -289,7 +298,9 @@
             return img;
         },
         getCell: function(positions) {
-            return document.querySelector('tr[data-row=\'' + positions.y + '\'] > .cell[data-col=\'' + positions.x + '\']');
+            return document.querySelector(
+                'tr[data-row=\'' + positions.y + '\'] > .cell[data-col=\'' + positions.x + '\']'
+            );
         },
         generateEnvironment: function() {
             game.player.position = game.getRandomLocation();
@@ -380,6 +391,17 @@
             visibleLog('Mining...', 'yellow');
             game.genericEnvInteract(key);
         },
+        cbguard: function(cb, printerr) {
+            // https://gist.github.com/shimondoodkin/a6762d8ab29ea497e245
+            var cb1 = cb;
+            return function() {
+                if (cb1) {
+                    var cb2 = cb1;
+                    cb1 = false;
+                    return cb2.apply(this, arguments);
+                }
+            }
+        },
         genericEnvInteract: function(key) {
             var poss = [];
 
@@ -388,16 +410,17 @@
                     poss.push(iKey);
                 }
             }
-            var pickPoss = game.ranNum(0, (poss.length - 1));
+            var pickPoss  = game.ranNum(0, (poss.length - 1));
             var giveCount = game.ranNum(1, 2);
 
-            game.pauseGame(3000, function() {
+            game.pauseGame(3000, function(result) {
                 inventory.giveItem(poss[pickPoss], giveCount);
-                visibleLog('Gained +'+giveCount+' ' + items[poss[pickPoss]]['name'], 'green');
+                visibleLog('Gained +' + giveCount + ' ' + items[poss[pickPoss]]['name'], 'green');
             });
         },
         pauseGame: function(duration, callback) {
             game.paused = true;
+            var cb = game.cbguard(callback);
 
             var elem = document.querySelector('#progress-bar .percentage');;
 
@@ -413,11 +436,9 @@
                 if (val == 100) {
                     game.paused = false;
                     elem.style.width = '0%';
-                    callback();
-                    return;
+                    cb(true);
                 }
             });
-
         },
         interactWithForest: function(key) {
             visibleLog('Chopping Trees...', 'yellow');
@@ -456,17 +477,18 @@
             var east    = {x: posCopy.x + 1, y: posCopy.y};
             var north   = {x: posCopy.x, y: posCopy.y - 1};
             var south   = {x: posCopy.x, y: posCopy.y + 1};
+
             return {
-                west: west,
-                east: east,
+                west:  west,
+                east:  east,
                 north: north,
                 south: south
             };
         },
         createTable: function() {
-            var cont = document.querySelector('#game-container');
+            var cont  = document.querySelector('#game-container');
             var table = cont.appendChild(document.createElement('table'));
-            table.id='game-table';
+            table.id  = 'game-table';
             table.setAttribute('cellpadding', '0');
             table.setAttribute('cellspacing', '0');
             var total = 0;
@@ -481,12 +503,12 @@
                     cell.setAttribute('data-cell', total);
                     cell.setAttribute('data-col', j);
                     cell.setAttribute('class', 'cell');
-                    cell.id = 'cell-'+ total;
+                    cell.id = 'cell-' + total;
                 }
             }
         },
         ranNum: function(min = 0, max = 100) {
-            return Math.floor(Math.random()*(max-min+1)+min);
+            return Math.floor(Math.random() * (max - min + 1) + min);
         },
         exit: function() {
             game.player.dead = true;
@@ -495,11 +517,18 @@
     };
 
 
-    document.querySelector('#btn-inventory').addEventListener('click', function(){showInventory();});
-    document.querySelector('#btn-hints').addEventListener('click', function(){showPopover('hints');});
-    document.querySelector('#btn-help').addEventListener('click', function(){showPopover('help');});
-    document.querySelector('.popover-hide').addEventListener('click', function(){hidePopovers();});
-
+    document.querySelector('#btn-inventory').addEventListener('click', function() {
+        showInventory();
+    });
+    document.querySelector('#btn-hints').addEventListener('click', function() {
+        showPopover('hints');
+    });
+    document.querySelector('#btn-help').addEventListener('click', function() {
+        showPopover('help');
+    });
+    document.querySelector('.popover-hide').addEventListener('click', function() {
+        hidePopovers();
+    });
 
     function hidePopovers() {
         var pops = document.querySelectorAll('.popover, .popover-hide');
@@ -525,7 +554,7 @@
             name.setAttribute('class', 'item-name');
 
             var image = document.createElement('img');
-            image.src = 'icons/'+key+'.png';
+            image.src = 'icons/' + key + '.png';
             image.setAttribute('class', 'item-image');
 
             var count = document.createElement('div');
@@ -542,7 +571,8 @@
             entry.appendChild(image);
             entry.appendChild(removeBtn);
             invBox.appendChild(entry);
-            removeBtn.addEventListener('click', function(){
+
+            removeBtn.addEventListener('click', function() {
                 inventory.removeItem(this.getAttribute('data-key'));
                 showInventory();
             });
