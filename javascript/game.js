@@ -155,7 +155,7 @@
             game.displayGame();
         },
         deleteGameImages: function() {
-            var cells = document.querySelectorAll('#game-table td > img');
+            var cells = document.querySelectorAll('.game-table td > img');
             [].forEach.call(cells, function(cell) {
                 cell.parentNode.removeChild(cell);
             });
@@ -187,7 +187,6 @@
                 return false;
             } else if (!items[itemName].materials) {
                 inventory.giveItem(itemName, count);
-                console.log('1');
                 return false;
             }
 
@@ -207,14 +206,12 @@
                 }
             }
             if (need !== false) {
-                console.log('2');
                 return false;
             }
             for (var keyC in itemReqs) {
                 inventory.removeItem(keyC, (itemReqs[keyC] * count));
             }
             inventory.giveItem(itemName, count)
-            console.log('3');
             return true;
 
         },
@@ -226,9 +223,9 @@
         },
         locationChecks: function() {
             if (game.withinXBlocks(game.bear.position, game.player.position, 2)) {
-                document.querySelector('#game-table').setAttribute('class', 'bear-close');
+                document.querySelector('.game-table').classList.add('bear-close');
             } else {
-                document.querySelector('#game-table').setAttribute('class', '');
+                document.querySelector('.game-table').classList.remove('bear-close');
             }
         },
         toggleBearVisibility: function() {
@@ -479,7 +476,7 @@
             game.paused = true;
             var cb = game.cbguard(callback);
 
-            var elem = document.querySelector('#progress-bar .percentage');;
+            var elem = document.querySelector('.progress-bar .percentage');;
 
             var st = window.performance.now();
             window.requestAnimationFrame(function step(time) {
@@ -545,7 +542,8 @@
         createTable: function() {
             var cont  = document.querySelector('#game-container');
             var table = cont.appendChild(document.createElement('table'));
-            table.id  = 'game-table';
+            table.setAttribute('class', 'game-table');
+            table.setAttribute('data-table', 'main');
             table.setAttribute('cellpadding', '0');
             table.setAttribute('cellspacing', '0');
             var total = 0;
@@ -661,8 +659,7 @@
 
             if (hasAllItems) {
                 craftBtn.addEventListener('click', function() {
-                    console.log(this.getAttribute('data-item'))
-                    console.log(game.craftItem(this.getAttribute('data-item')));
+                    game.craftItem(this.getAttribute('data-item'));
                     showCraftingMenu();
                 });
             } else {
@@ -736,7 +733,7 @@
     }
 
     function visibleLog(msg, color = 'white') {
-        var log   = document.querySelector('#log');
+        var log   = document.querySelector('.visible-log');
         var entry = document.createElement('div');
         var text  = document.createTextNode(msg);
         entry.setAttribute('class', 'entry');
