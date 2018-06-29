@@ -1,3 +1,7 @@
+::-webkit-scrollbar{width:20px}
+::-webkit-scrollbar-track{background:#1a1a1a}
+::-webkit-scrollbar-thumb{background:#929292}
+::-webkit-scrollbar-thumb:hover{background:#929292}
 
 html, body, .window {
     margin: 0;
@@ -110,6 +114,8 @@ html, body, .window {
 
 .popover-content {
     padding: 5px;
+    height: calc(100% - 40px);
+    overflow-y: auto;
 }
 
 .popover-content * {
@@ -123,10 +129,13 @@ html, body, .window {
     padding: 0;
     position: relative;
     text-align: center;
+    vertical-align: top;
+    margin-bottom: 5px;
 }
 
 .item-name {
     text-align: center;
+    height: 30px;
 }
 
 .item-count {
@@ -161,4 +170,57 @@ html, body, .window {
     height: 5px;
     width: 0%;
     background: green;
+}
+
+.items-required {
+    border-top: 1px solid white;
+    background: #353542;
+    height: 90px;
+    overflow-y: auto;
+}
+.req-item-name {
+    display: inline-block;
+    height: 24px;
+    vertical-align: top;
+    line-height: 24px;
+    padding: 0 7px;
+    font-size: 14px;
+}
+
+.req-item {
+    text-align: left;
+    margin-left: 5px;
+}
+.req-item-count {
+    display: inline-block;
+    height: 22px;
+    vertical-align: top;
+    line-height: 22px;
+    padding: 0px 7px;
+    font-size: 14px;
+    background: #ffb600;
+    border-radius: 24px;
+    float: right;
+    margin: 1px 2px;
+    color: black;
+}
+
+.req-item-count.under {
+    background: #5f0000;
+    color: white;
+}
+
+.req-item-count.over {
+    background: #2e5609;
+    color: white;
+}
+
+.item-craft {
+    background: #2f5509;
+    cursor: pointer;
+    padding: 2px 0;
+}
+
+.item-craft.disabled {
+    background: #5e0000;
 }

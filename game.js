@@ -3,48 +3,48 @@
         shortSword: {
             name: 'Short Sword',
             damage: 5,
-            materials: [
-                {'iron': 2},
-                {'wood': 1}
-            ],
+            materials: [{
+                'iron': 2,
+                'wood': 1
+            }],
             carryWeight: 3
         },
         basicSword: {
             name: 'Basic Sword',
             damage: 8,
-            materials: [
-                {'iron': 3},
-                {'bronze': 1},
-                {'wood': 1}
-            ],
+            materials: [{
+                'iron': 3,
+                'bronze': 1,
+                'wood': 1
+            }],
             carryWeight: 5
         },
         megaSword: {
             name: 'Mega Sword',
             damage: 12,
-            materials: [
-                {'iron': 4},
-                {'gold': 2},
-                {'wood': 1}
-            ],
+            materials: [{
+                'iron': 4,
+                'gold': 2,
+                'wood': 1
+            }],
             carryWeight: 9
         },
         basicAxe: {
             name: 'Basic Axe',
             damage: 3,
-            materials: [
-                {'iron': 2},
-                {'wood': 1}
-            ]
+            materials: [{
+                'iron': 2,
+                'wood': 1
+            }]
         },
         solidAxe: {
             name: 'Solid Axe',
             damage: 6,
-            materials: [
-                {'iron': 3},
-                {'bronze': 1},
-                {'wood': 1}
-            ]
+            materials: [{
+                'iron': 3,
+                'bronze': 1,
+                'wood': 1
+            }]
         },
         iron: {
             name: 'Iron Bar',
@@ -73,12 +73,32 @@
         current: [],
 
         giveItem: function(giveItem, count = 1) {
+            if (!items[giveItem]) {
+                console.log("Error: Item(" + giveItem + ") not found");
+                return;
+            }
             if (this.hasItem(giveItem)) {
                 this.current[giveItem].count += count;
             } else {
                 this.current[giveItem] = {count: count};
             }
             inventory.currentCarryWeight += (items[giveItem].carryWeight * count);
+        },
+        getNeeded: function(item, countNeeded = 1) {
+            let itemCount = inventory.getItemCount(item);
+            if (itemCount == 0) {
+                return countNeeded;
+            }
+            if (itemCount >= countNeeded) {
+                return 0;
+            }
+            return (countNeeded - itemCount);
+        },
+        getItemCount: function(item) {
+            if (inventory.current[item] === undefined || inventory.current[item].count === 0) {
+                return 0;
+            }
+            return inventory.current[item].count;
         },
         removeItem: function(removeItem, count = 1) {
             if (this.hasItem(removeItem)) {
@@ -160,6 +180,43 @@
 
             game.displayArrows();
             game.locationChecks();
+        },
+        craftItem: function(itemName, count = 1) {
+            if (!items[itemName]) {
+                console.log("Error: Item(" + giveItem + ") not found");
+                return false;
+            } else if (!items[itemName].materials) {
+                inventory.giveItem(itemName, count);
+                console.log('1');
+                return false;
+            }
+
+            visibleLog('Crafting ' + count + ' ' + items[itemName].name);
+
+            const itemReqs = items[itemName].materials[0];
+            var need = false;
+
+            for (var key in itemReqs) {
+                let reqCount = (itemReqs[key] * count);
+                if (!inventory.hasItem(key, reqCount)) {
+                    if (need === false) {
+                        visibleLog('You do not have the required items to craft a ' + items[itemName].name, 'red');
+                    }
+                    var need = inventory.getNeeded(key, reqCount);
+                    visibleLog('>> ' + items[key].name + ": You need " + need + ' more');
+                }
+            }
+            if (need !== false) {
+                console.log('2');
+                return false;
+            }
+            for (var keyC in itemReqs) {
+                inventory.removeItem(keyC, (itemReqs[keyC] * count));
+            }
+            inventory.giveItem(itemName, count)
+            console.log('3');
+            return true;
+
         },
         giveXP: function(count) {
             game.player.xp += count;
@@ -520,6 +577,9 @@
     document.querySelector('#btn-inventory').addEventListener('click', function() {
         showInventory();
     });
+    document.querySelector('#btn-crafting').addEventListener('click', function() {
+        showCraftingMenu();
+    });
     document.querySelector('#btn-hints').addEventListener('click', function() {
         showPopover('hints');
     });
@@ -535,6 +595,87 @@
         [].forEach.call(pops, function(pop) {
             pop.classList.add('hidden');
         });
+    }
+
+    function showCraftingMenu() {
+        var craftBox = document.querySelector('#crafting .popover-content');
+        var prevItems = document.querySelectorAll('#crafting .item');
+
+        [].forEach.call(prevItems, function(prevItem) {
+            prevItem.parentNode.removeChild(prevItem);
+        });
+
+        for (var key in items) {
+            if (items[key].materials === undefined) {
+                continue;
+            }
+
+            let itemName = items[key].name;
+            let mats = items[key].materials[0];
+
+            var entry = document.createElement('div');
+            entry.setAttribute('class', 'item');
+
+            var name = document.createElement('div');
+            name.innerText = itemName;
+            name.setAttribute('class', 'item-name');
+
+            var image = createIconElem(key, 64);
+
+            var reqBox = document.createElement('div');
+            reqBox.setAttribute('class', 'items-required');
+
+            var hasAllItems = true;
+
+            for (var mat in mats) {
+                var matItem = document.createElement('div');
+                matItem.setAttribute('class', 'req-item');
+
+                var matName = document.createElement('div');
+                matName.innerText = items[mat].name;
+                matName.setAttribute('class', 'req-item-name');
+
+                var matImage = createIconElem(mat, 24);
+
+                var matCount = document.createElement('div');
+                matCount.innerText = mats[mat];
+                matCount.setAttribute('class', 'req-item-count');
+
+                if (inventory.hasItem(mat, mats[mat]) === true) {
+                    matCount.classList.add('over');
+                } else {
+                    matCount.classList.add('under');
+                    hasAllItems = false;
+                }
+
+                matItem.appendChild(matImage);
+                matItem.appendChild(matName);
+                matItem.appendChild(matCount);
+                reqBox.appendChild(matItem);
+            }
+
+            var craftBtn = document.createElement('div');
+            craftBtn.innerText = 'Craft';
+            craftBtn.setAttribute('class', 'item-craft');
+            craftBtn.setAttribute('data-item', key);
+
+            if (hasAllItems) {
+                craftBtn.addEventListener('click', function() {
+                    console.log(this.getAttribute('data-item'))
+                    console.log(game.craftItem(this.getAttribute('data-item')));
+                    showCraftingMenu();
+                });
+            } else {
+                craftBtn.classList.add('disabled');
+            }
+
+            entry.appendChild(name);
+            entry.appendChild(image);
+            entry.appendChild(reqBox);
+            entry.appendChild(craftBtn);
+            craftBox.appendChild(entry);
+        }
+        showPopover('crafting');
     }
 
     function showInventory() {
@@ -553,9 +694,7 @@
             name.innerText = items[key].name;
             name.setAttribute('class', 'item-name');
 
-            var image = document.createElement('img');
-            image.src = 'icons/' + key + '.png';
-            image.setAttribute('class', 'item-image');
+            var image = createIconElem(key, 120);
 
             var count = document.createElement('div');
             count.innerText = inventory.current[key].count;
@@ -584,6 +723,16 @@
         hidePopovers();
         document.querySelector('#' + name + '.popover').setAttribute('class', 'popover');
         document.querySelector('.popover-hide').setAttribute('class', 'popover-hide');
+    }
+
+    function createIconElem(icon, wh) {
+        var image = document.createElement('img');
+        image.src = 'icons/' + icon + '.png';
+        image.setAttribute('class', 'item-image');
+        image.setAttribute('width', wh);
+        image.setAttribute('height', wh);
+
+        return image;
     }
 
     function visibleLog(msg, color = 'white') {
