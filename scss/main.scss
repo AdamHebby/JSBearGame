@@ -1,7 +1,8 @@
 $basebg: #1a1a1a;
 
 ::-webkit-scrollbar{
-    width: 20px;
+    width: 5px;
+    height: 5px;
 }
 ::-webkit-scrollbar-track{
     background: $basebg;

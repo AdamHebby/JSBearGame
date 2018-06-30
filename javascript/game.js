@@ -2,6 +2,7 @@
     var items = {
         shortSword: {
             name: 'Short Sword',
+            carryWeight: 3,
             damage: 5,
             materials: [{
                 'iron': 2,
@@ -11,6 +12,7 @@
         },
         basicSword: {
             name: 'Basic Sword',
+            carryWeight: 5,
             damage: 8,
             materials: [{
                 'iron': 3,
@@ -31,6 +33,7 @@
         },
         basicAxe: {
             name: 'Basic Axe',
+            carryWeight: 5,
             damage: 3,
             materials: [{
                 'iron': 2,
@@ -39,6 +42,7 @@
         },
         solidAxe: {
             name: 'Solid Axe',
+            carryWeight: 8,
             damage: 6,
             materials: [{
                 'iron': 3,
@@ -46,26 +50,58 @@
                 'wood': 1
             }]
         },
-        iron: {
-            name: 'Iron Bar',
+        electrum: {
+            name: 'Electrum',
             carryWeight: 2,
-            envType: 'mine'
+            materials: [{
+                'gold': 1,
+                'silver': 1
+            }]
         },
         bronze: {
             name: 'Bronze Bar',
             carryWeight: 2,
-            envType: 'mine'
+            materials: [{
+                'copper': 3,
+                'tin': 1
+            }]
+        },
+        iron: {
+            name: 'Iron Bar',
+            carryWeight: 2,
+            envType: 'mine',
+            probabilityRatio: 4
+        },
+        copper: {
+            name: 'Copper Bar',
+            carryWeight: 2,
+            envType: 'mine',
+            probabilityRatio: 4
+        },
+        tin: {
+            name: 'Tin Bar',
+            carryWeight: 2,
+            envType: 'mine',
+            probabilityRatio: 4
         },
         gold: {
             name: 'Gold Bar',
             carryWeight: 2,
-            envType: 'mine'
+            envType: 'mine',
+            probabilityRatio: 2
+        },
+        silver: {
+            name: 'Silver Bar',
+            carryWeight: 2,
+            envType: 'mine',
+            probabilityRatio: 1
         },
         wood: {
             name: 'Wood',
             carryWeight: 1,
-            envType: 'forest'
-        },
+            envType: 'forest',
+            probabilityRatio: 1
+        }
     };
     var inventory = {
         maxCarryWeight: 100,
@@ -180,6 +216,13 @@
 
             game.displayArrows();
             game.locationChecks();
+
+            if (inventory.currentCarryWeight == 0) {
+                var carryPercent = '0%';
+            } else {
+                var carryPercent = Math.floor((inventory.currentCarryWeight / inventory.maxCarryWeight) * 100) + '%';
+            }
+            document.querySelector('#btn-carry').innerHTML = 'Carry: ' + carryPercent;
         },
         craftItem: function(itemName, count = 1) {
             if (!items[itemName]) {
@@ -211,7 +254,8 @@
             for (var keyC in itemReqs) {
                 inventory.removeItem(keyC, (itemReqs[keyC] * count));
             }
-            inventory.giveItem(itemName, count)
+            inventory.giveItem(itemName, count);
+            game.displayGame();
             return true;
 
         },
@@ -461,7 +505,9 @@
 
             for (var iKey in items) {
                 if (items[iKey].envType === game.environment[key].envType) {
-                    poss.push(iKey);
+                    for (var i = 0; i <= items[iKey].probabilityRatio; i++) {
+                        poss.push(iKey);
+                    }
                 }
             }
             var pickPoss  = game.ranNum(0, (poss.length - 1));
@@ -470,6 +516,7 @@
             game.pauseGame(3000, function(result) {
                 inventory.giveItem(poss[pickPoss], giveCount);
                 visibleLog('Gained +' + giveCount + ' ' + items[poss[pickPoss]]['name'], 'green');
+                game.displayGame();
             });
         },
         pauseGame: function(duration, callback) {
