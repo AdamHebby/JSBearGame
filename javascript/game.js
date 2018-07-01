@@ -7,8 +7,7 @@
             materials: [{
                 'iron': 2,
                 'wood': 1
-            }],
-            carryWeight: 3
+            }]
         },
         basicSword: {
             name: 'Basic Sword',
@@ -18,18 +17,17 @@
                 'iron': 3,
                 'bronze': 1,
                 'wood': 1
-            }],
-            carryWeight: 5
+            }]
         },
         megaSword: {
             name: 'Mega Sword',
+            carryWeight: 9,
             damage: 12,
             materials: [{
                 'iron': 4,
                 'gold': 2,
                 'wood': 1
-            }],
-            carryWeight: 9
+            }]
         },
         basicAxe: {
             name: 'Basic Axe',
@@ -110,7 +108,6 @@
 
         giveItem: function(giveItem, count = 1) {
             if (!items[giveItem]) {
-                console.log("Error: Item(" + giveItem + ") not found");
                 return;
             }
             if (this.hasItem(giveItem)) {
@@ -217,16 +214,19 @@
             game.displayArrows();
             game.locationChecks();
 
-            if (inventory.currentCarryWeight == 0) {
-                var carryPercent = '0%';
-            } else {
-                var carryPercent = Math.floor((inventory.currentCarryWeight / inventory.maxCarryWeight) * 100) + '%';
+            var carryPercent = '0%';
+
+            let ccw = inventory.currentCarryWeight;
+            let mcw = inventory.maxCarryWeight;
+
+            if (ccw !== 0) {
+                carryPercent = Math.floor((ccw / mcw) * 100) + '%';
             }
+
             document.querySelector('#btn-carry').innerHTML = 'Carry: ' + carryPercent;
         },
         craftItem: function(itemName, count = 1) {
             if (!items[itemName]) {
-                console.log("Error: Item(" + giveItem + ") not found");
                 return false;
             } else if (!items[itemName].materials) {
                 inventory.giveItem(itemName, count);
@@ -244,8 +244,8 @@
                     if (need === false) {
                         visibleLog('You do not have the required items to craft a ' + items[itemName].name, 'red');
                     }
-                    var need = inventory.getNeeded(key, reqCount);
-                    visibleLog('>> ' + items[key].name + ": You need " + need + ' more');
+                    need = inventory.getNeeded(key, reqCount);
+                    visibleLog('>> ' + items[key].name + ': You need ' + need + ' more');
                 }
             }
             if (need !== false) {
@@ -489,7 +489,7 @@
             visibleLog('Mining...', 'yellow');
             game.genericEnvInteract(key);
         },
-        cbguard: function(cb, printerr) {
+        cbguard: function(cb) {
             // https://gist.github.com/shimondoodkin/a6762d8ab29ea497e245
             var cb1 = cb;
             return function() {
@@ -498,7 +498,7 @@
                     cb1 = false;
                     return cb2.apply(this, arguments);
                 }
-            }
+            };
         },
         genericEnvInteract: function(key) {
             var poss = [];
@@ -513,7 +513,7 @@
             var pickPoss  = game.ranNum(0, (poss.length - 1));
             var giveCount = game.ranNum(1, 2);
 
-            game.pauseGame(3000, function(result) {
+            game.pauseGame(3000, function() {
                 inventory.giveItem(poss[pickPoss], giveCount);
                 visibleLog('Gained +' + giveCount + ' ' + items[poss[pickPoss]]['name'], 'green');
                 game.displayGame();
@@ -523,12 +523,12 @@
             game.paused = true;
             var cb = game.cbguard(callback);
 
-            var elem = document.querySelector('.progress-bar .percentage');;
+            var elem = document.querySelector('.progress-bar .percentage');
 
             var st = window.performance.now();
             window.requestAnimationFrame(function step(time) {
-                var diff = Math.round(time - st),
-                val = Math.round(diff / duration * 100);
+                var diff = Math.round(time - st);
+                var val = Math.round(diff / duration * 100);
                 val = val > 100 ? 100 : val;
                 elem.style.width = val + '%';
                 if (diff < duration) {
