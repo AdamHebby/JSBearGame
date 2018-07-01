@@ -53,10 +53,13 @@ html, body, .window {
         height: calc(100% - 40px);
         overflow-y: auto;
         padding: 5px;
+        color: white;
 
         * {
             user-select: none;
-
+        }
+        a {
+            color: white;
         }
     }
 
