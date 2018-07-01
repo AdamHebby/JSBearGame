@@ -114,7 +114,7 @@ html, body, .window {
             border: 2px solid white;
             display: inline-table;
             height: 600px;
-            margin: 30px 10px 0;
+            margin: 10px 10px 0;
             padding: 0;
             width: 600px;
 
@@ -141,16 +141,17 @@ html, body, .window {
             }
         }
 
-        .progress-bar {
-            display: flex;
-            height: 5px;
+        .progress-bars {
+            display: table;
             margin: 0 auto;
+            padding: 0;
             width: 600px;
 
             .percentage {
                 background: green;
-                display: inline-block;
+                display: block;
                 height: 5px;
+                margin-bottom: 1px;
                 width: 0%;
             }
         }
