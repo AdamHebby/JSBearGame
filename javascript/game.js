@@ -543,8 +543,7 @@
             var cb = game.cbguard(callback);
 
             var barsCont = document.querySelector('.progress-bars');
-            var bar = document.createElement('div');
-            bar.classList.add('percentage');
+            var bar = makeElementHelper('percentage');
             barsCont.appendChild(bar);
 
             var st = window.performance.now();
@@ -662,6 +661,21 @@
         hidePopovers();
     });
 
+    function makeElementHelper(className, innerText = false, type = 'div') {
+        var el = document.createElement(type);
+        el.setAttribute('class', className);
+        if (innerText !== false) {
+            el.innerText = innerText;
+        }
+        return el;
+    }
+
+    HTMLDivElement.prototype.appendChildren = function(arr) {
+        for (var key in arr) {
+            this.appendChild(arr[key]);
+        }
+    };
+
     function hidePopovers() {
         var pops = document.querySelectorAll('.popover, .popover-hide');
         [].forEach.call(pops, function(pop) {
@@ -682,36 +696,21 @@
                 continue;
             }
 
-            let itemName = items[key].name;
-            let mats = items[key].materials[0];
+            var itemName = items[key].name;
+            var mats = items[key].materials[0];
 
-            var entry = document.createElement('div');
-            entry.setAttribute('class', 'item');
-
-            var name = document.createElement('div');
-            name.innerText = itemName;
-            name.setAttribute('class', 'item-name');
-
-            var image = createIconElem(key, 64);
-
-            var reqBox = document.createElement('div');
-            reqBox.setAttribute('class', 'items-required');
+            var entry  = makeElementHelper('item');
+            var name   = makeElementHelper('item-name', itemName, 'div');
+            var reqBox = makeElementHelper('items-required');
+            var image  = createIconElem(key, 64);
 
             var hasAllItems = true;
 
             for (var mat in mats) {
-                var matItem = document.createElement('div');
-                matItem.setAttribute('class', 'req-item');
-
-                var matName = document.createElement('div');
-                matName.innerText = items[mat].name;
-                matName.setAttribute('class', 'req-item-name');
-
+                var matItem  = makeElementHelper('req-item');
+                var matName  = makeElementHelper('req-item-name', items[mat].name);
+                var matCount = makeElementHelper('req-item-count', mats[mat]);
                 var matImage = createIconElem(mat, 24);
-
-                var matCount = document.createElement('div');
-                matCount.innerText = mats[mat];
-                matCount.setAttribute('class', 'req-item-count');
 
                 if (inventory.hasItem(mat, mats[mat]) === true) {
                     matCount.classList.add('over');
@@ -720,15 +719,11 @@
                     hasAllItems = false;
                 }
 
-                matItem.appendChild(matImage);
-                matItem.appendChild(matName);
-                matItem.appendChild(matCount);
+                matItem.appendChildren([matImage, matName, matCount]);
                 reqBox.appendChild(matItem);
             }
 
-            var craftBtn = document.createElement('div');
-            craftBtn.innerText = 'Craft';
-            craftBtn.setAttribute('class', 'item-craft');
+            var craftBtn = makeElementHelper('item-craft', 'Craft');
             craftBtn.setAttribute('data-item', key);
 
             if (hasAllItems) {
@@ -740,10 +735,7 @@
                 craftBtn.classList.add('disabled');
             }
 
-            entry.appendChild(name);
-            entry.appendChild(image);
-            entry.appendChild(reqBox);
-            entry.appendChild(craftBtn);
+            entry.appendChildren([name, image, reqBox, craftBtn]);
             craftBox.appendChild(entry);
         }
         showPopover('crafting');
@@ -758,28 +750,15 @@
         });
 
         for (var key in inventory.current) {
-            var entry = document.createElement('div');
-            entry.setAttribute('class', 'item');
-
-            var name = document.createElement('div');
-            name.innerText = items[key].name;
-            name.setAttribute('class', 'item-name');
-
+            var entry = makeElementHelper('item');
+            var name  = makeElementHelper('item-name', items[key].name);
             var image = createIconElem(key, 120);
+            var count = makeElementHelper('item-count', inventory.current[key].count);
 
-            var count = document.createElement('div');
-            count.innerText = inventory.current[key].count;
-            count.setAttribute('class', 'item-count');
-
-            var removeBtn = document.createElement('div');
-            removeBtn.innerText = 'Delete Item';
-            removeBtn.setAttribute('class', 'item-remove');
+            var removeBtn = makeElementHelper('item-remove', 'Delete Item');
             removeBtn.setAttribute('data-key', key);
 
-            entry.appendChild(count);
-            entry.appendChild(name);
-            entry.appendChild(image);
-            entry.appendChild(removeBtn);
+            entry.appendChildren([count, name, image, removeBtn]);
             invBox.appendChild(entry);
 
             removeBtn.addEventListener('click', function() {
@@ -808,10 +787,7 @@
 
     function visibleLog(msg, color = 'white') {
         var log   = document.querySelector('.visible-log');
-        var entry = document.createElement('div');
-        var text  = document.createTextNode(msg);
-        entry.setAttribute('class', 'entry');
-        entry.appendChild(text);
+        var entry = makeElementHelper('entry', msg);
 
         if (color) {
             entry.style.color = color;
