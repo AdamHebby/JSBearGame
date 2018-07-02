@@ -1,5 +1,6 @@
 (function() {
     var items = {
+        // Weapons
         shortSword: {
             name: 'Short Sword',
             carryWeight: 3,
@@ -29,6 +30,7 @@
                 'wood': 1
             }]
         },
+        // Tools or Weapons
         basicAxe: {
             name: 'Basic Axe',
             carryWeight: 5,
@@ -48,6 +50,7 @@
                 'wood': 1
             }]
         },
+        // Mined Items
         electrum: {
             name: 'Electrum',
             carryWeight: 2,
